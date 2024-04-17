@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 
 export const colors = {
     darkGray: '#2D2D2D',
-    lightGray: '9B9B9B',
+    lightGray: '#9B9B9B',
     orange: '#FF9427',
 
     textPrimary: 'white',
@@ -54,7 +54,7 @@ export const styles = StyleSheet.create({
         textAlign: 'center',
         padding: 10,
         fontSize: 30,
-        fontWeight: '300',
+        fontWeight: '400',
         color: 'white'
     }
 
