@@ -7,6 +7,7 @@ interface Props {
     doubleWidth?: boolean;
     blackText?: boolean;
     onPress: () => void;
+    onLongPress?: () => void;
 }
 
 export const CalculatorButton = ({ 
