@@ -1,18 +1,36 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 enum Operators {
-    add,
-    subtract,
-    multiply,
-    divide
+    add = '+',
+    subtract = '-',
+    multiply = '×',
+    divide = '÷'
 }
 
 export const useCalculator = () => {
-  
+
+    const [formula, setFormula] = useState('')
     const [number, setNumber] = useState('0')
     const [previusNumber, setPreviusNumber] = useState('0')
 
     const lastOperation = useRef<Operators>()
+
+    useEffect(() => {
+
+        if( lastOperation.current ) {
+            const firstFormulaPart = formula.split(' ').at(0)
+            setFormula(`${firstFormulaPart} ${lastOperation.current} ${number}`)
+        } else {
+            setFormula(number)
+        }
+
+    }, [number])
+
+    useEffect(() => {
+        const subResult = calculateSubResult()
+        setPreviusNumber( subResult.toString() )
+    }, [formula])  
+    
 
     const deleteLast = () => {
         if( number.length === 1 || (number.length === 2 && number.includes('-'))) {
@@ -25,6 +43,8 @@ export const useCalculator = () => {
     const clean = () => {
         setNumber('0')
         setPreviusNumber('0')
+        lastOperation.current = undefined
+        setFormula('')
     }
 
     const toggleSign = () => {
@@ -65,6 +85,8 @@ export const useCalculator = () => {
 
     const setLastNumber = () => {
 
+        calculateResult()
+
         if(number.endsWith('.')) {
             setPreviusNumber( number.slice(0,-1) )
         } else {
@@ -94,10 +116,45 @@ export const useCalculator = () => {
         lastOperation.current = Operators.add
     }
 
+    const calculateResult = () => {
+        
+        const result = calculateSubResult()
+        setFormula(`${result}`)
+
+        lastOperation.current = undefined
+        setPreviusNumber('0')
+
+    }
+
+    const calculateSubResult = () => {
+
+        const [ firstValue, operation, secondValue ] = formula.split(' ')
+        const num1 = Number(firstValue)
+        const num2 = Number(secondValue)
+
+        if( isNaN(num2) ) return num1
+
+        switch( operation ){
+            case Operators.add:
+                return num1 + num2
+            case Operators.subtract:
+                return num1 - num2
+            case Operators.multiply:
+                return num1 * num2
+            case Operators.divide:
+                return num1 / num2
+            default:
+                throw new Error('Operation not implemented')
+        }
+
+    }
+
     return {
         // Properties
         number,
         previusNumber,
+        calculateResult,
+        formula,
 
         // Methods
         buildNumber,
